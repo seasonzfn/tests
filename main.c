@@ -25,7 +25,7 @@ void gpio_callback(uint gpio, uint32_t events) {
         }
 
 
-        if (value == ((1 << 6) | (1 << 7))) {
+        if (value == ((1 << 5) | (1 << 6))) {
             direction = -1;
         }
         if (value == ((1 << 0) | (1 << 1))) {
@@ -58,14 +58,14 @@ int main() {
 
     gpio_set_irq_enabled_with_callback(
         BUTTON1,
-        GPIO_IRQ_EDGE_RISE,
+        GPIO_IRQ_EDGE_FALL,
         true,
         &gpio_callback
     );
 
     gpio_set_irq_enabled(
         BUTTON2,
-        GPIO_IRQ_EDGE_FALL,
+        GPIO_IRQ_EDGE_RISE,
         true
     );
 
