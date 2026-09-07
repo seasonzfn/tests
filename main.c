@@ -12,12 +12,12 @@ int main() {
     // Never-ending superloop
     while (true) {
         for(uint pin = 0; pin <= 6; pin++){
-            uint8_t value = (1 << pin);
+            uint8_t value = (1 << pin) | (1 << pin) + 1;
             gpio_put_masked(mask, value);
             sleep_ms(50);
         }
         for(int pin = 6; pin >= 0; pin--){
-            uint8_t value = (1 << pin);
+            uint8_t value = (1 << pin) | (1 << pin) + 1;
             gpio_put_masked(mask, value);
             sleep_ms(50);
         }
