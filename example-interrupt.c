@@ -1,3 +1,4 @@
+// example programme interrupt & gpio mask - saxion (c) 2025
 
 #include "pico/stdlib.h"
 #include "stdio.h"
