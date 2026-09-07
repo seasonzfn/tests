@@ -3,27 +3,29 @@
 
 #define BUTTON1 16
 #define BUTTON2 17
+#define DEBOUNCE_US 20000
 
 uint8_t mask = 0x7F;
-
-
 uint8_t value = (1 << 0) | (1 << 1);
 int direction = 1;
 
+volatile uint32_t last_irq1 = 0;
+volatile uint32_t last_irq2 = 0;
 
 void gpio_callback(uint gpio, uint32_t events) {
+    uint32_t now = time_us_32();
 
     if (gpio == BUTTON1 && (events & GPIO_IRQ_EDGE_FALL)) {
+        if (now - last_irq1 < DEBOUNCE_US) return;
+        last_irq1 = now;
 
-        gpio_put_masked(mask, value);
-        sleep_ms(100);
+        gpio_put_masked(mask, value);   // no sleep_ms here
 
         if (direction == 1) {
             value <<= 1;
         } else {
             value >>= 1;
         }
-
 
         if (value == ((1 << 5) | (1 << 6))) {
             direction = -1;
@@ -34,6 +36,9 @@ void gpio_callback(uint gpio, uint32_t events) {
     }
 
     if (gpio == BUTTON2 && (events & GPIO_IRQ_EDGE_FALL)) {
+        if (now - last_irq2 < DEBOUNCE_US) return;
+        last_irq2 = now;
+
         gpio_put_masked(mask, 0);
         value = (1 << 0) | (1 << 1);
         direction = 1;
@@ -42,7 +47,6 @@ void gpio_callback(uint gpio, uint32_t events) {
 
 int main() {
     stdio_init_all();
-
 
     gpio_init_mask(mask);
     gpio_set_dir_masked(mask, mask);
