@@ -11,12 +11,16 @@ int main() {
 
     // Never-ending superloop
     while (true) {
-        // 4. Turn all selected pins ON
-        gpio_put_masked(mask, mask);
-        sleep_ms(500);
+        for(uint pin = 0; pin <= 6; pin++){
+            uint8_t value = (1 << pin);
+            gpio_put_masked(mask, value);
+            sleep_ms(100);
+        }
+        for(int pin = 6; pin >= 0; pin--){
+            uint8_t value = (1 >> pin);
+            gpio_put_masked(mask, value);
+            sleep_ms(100);
+        }
 
-        // 5. Turn all selected pins OFF
-        gpio_put_masked(mask, 0);
-        sleep_ms(500);
     }
 }
