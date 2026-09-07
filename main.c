@@ -16,26 +16,28 @@ void gpio_callback(uint gpio, uint32_t events) {
     uint32_t now = time_us_32();
 
     if (gpio == BUTTON1 && (events & GPIO_IRQ_EDGE_FALL)) {
-        if (now - last_irq1 < DEBOUNCE_US) return;
-        last_irq1 = now;
-
-        gpio_put_masked(mask, value);   // no sleep_ms here
-
-        if (direction == 1) {
-            value <<= 1;
-        } else {
-            value >>= 1;
-        }
-
-        if (value == ((1 << 5) | (1 << 6))) {
-            direction = -1;
-        }
-        if (value == ((1 << 0) | (1 << 1))) {
-            direction = 1;
+        while(!BUTTON2){
+            if (now - last_irq1 < DEBOUNCE_US) return;
+            last_irq1 = now;
+    
+            gpio_put_masked(mask, value);   // no sleep_ms here
+    
+            if (direction == 1) {
+                value <<= 1;
+            } else {
+                value >>= 1;
+            }
+    
+            if (value == ((1 << 5) | (1 << 6))) {
+                direction = -1;
+            }
+            if (value == ((1 << 0) | (1 << 1))) {
+                direction = 1;
+            }
         }
     }
 
-    if (gpio == BUTTON2 && (events & GPIO_IRQ_EDGE_FALL)) {
+    if (gpio == BUTTON2 && (events & GPIO_IRQ_EDGE_RISE)) {
         if (now - last_irq2 < DEBOUNCE_US) return;
         last_irq2 = now;
 
@@ -58,7 +60,7 @@ int main() {
     gpio_set_dir(BUTTON2, GPIO_IN);
 
     gpio_pull_up(BUTTON1);
-    gpio_pull_up(BUTTON2);
+    gpio_pull_down(BUTTON2);
 
     gpio_set_irq_enabled_with_callback(
         BUTTON1,
@@ -69,7 +71,7 @@ int main() {
 
     gpio_set_irq_enabled(
         BUTTON2,
-        GPIO_IRQ_EDGE_FALL,
+        GPIO_IRQ_EDGE_RISE,
         true
     );
 
