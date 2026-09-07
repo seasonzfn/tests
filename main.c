@@ -14,12 +14,12 @@ int main() {
         for(uint pin = 0; pin <= 6; pin++){
             uint8_t value = (1 << pin);
             gpio_put_masked(mask, value);
-            sleep_ms(100);
+            sleep_ms(50);
         }
         for(int pin = 6; pin >= 0; pin--){
-            uint8_t value = (1 >> pin);
+            uint8_t value = (1 << pin);
             gpio_put_masked(mask, value);
-            sleep_ms(100);
+            sleep_ms(50);
         }
 
     }
