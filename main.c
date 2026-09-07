@@ -37,7 +37,7 @@ void gpio_callback(uint gpio, uint32_t events) {
         }
     }
 
-    if (gpio == BUTTON2 && (events & GPIO_IRQ_EDGE_RISE)) {
+    if (gpio == BUTTON2 && (events & GPIO_IRQ_EDGE_FALL)) {
         if (now - last_irq2 < DEBOUNCE_US) return;
         last_irq2 = now;
 
@@ -71,7 +71,7 @@ int main() {
 
     gpio_set_irq_enabled(
         BUTTON2,
-        GPIO_IRQ_EDGE_RISE,
+        GPIO_IRQ_EDGE_FALL,
         true
     );
 
