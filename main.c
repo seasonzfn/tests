@@ -1,20 +1,20 @@
-#include "pico/stdlib.h"
+#include "pico/stdlib.h" // Standard library for Pico
 #include "stdio.h"
 
-#define BUTTON1 16
-#define BUTTON2 17
+int main() {
+    stdio_init_all(); // needed for picotool to autoload
 
-uint8_t mask = 0x7F;
+    __uint8_t mask = 0x7F;
 
+    gpio_init_mask(mask);
+    gpio_set_dir_masked(mask, mask);
+    uint8_t value = (1 << 0) | (1 << 1);
+    int direction = 1;
 
-uint8_t value = (1 << 0) | (1 << 1);
-int direction = 1;
+    
 
-
-void gpio_callback(uint gpio, uint32_t events) {
-
-    if (gpio == BUTTON1 && (events & GPIO_IRQ_EDGE_FALL)) {
-
+    // Never-ending superloop
+    while (true) {
         gpio_put_masked(mask, value);
         sleep_ms(100);
 
@@ -24,52 +24,12 @@ void gpio_callback(uint gpio, uint32_t events) {
             value >>= 1;
         }
 
-
-        if (value == ((1 << 5) | (1 << 6))) {
+        if (value == ((1 << 6) | (1 << 7))) {
             direction = -1;
         }
         if (value == ((1 << 0) | (1 << 1))) {
             direction = 1;
         }
-    }
 
-    if (gpio == BUTTON2 && (events & GPIO_IRQ_EDGE_RISE)) {
-        gpio_put_masked(mask, 0);
-        value = (1 << 0) | (1 << 1);
-        direction = 1;
-    }
-}
-
-int main() {
-    stdio_init_all();
-
-
-    gpio_init_mask(mask);
-    gpio_set_dir_masked(mask, mask);
-
-    gpio_init(BUTTON1);
-    gpio_init(BUTTON2);
-
-    gpio_set_dir(BUTTON1, GPIO_IN);
-    gpio_set_dir(BUTTON2, GPIO_IN);
-
-    gpio_pull_up(BUTTON1);
-    gpio_pull_up(BUTTON2);
-
-    gpio_set_irq_enabled_with_callback(
-        BUTTON1,
-        GPIO_IRQ_EDGE_FALL,
-        true,
-        &gpio_callback
-    );
-
-    gpio_set_irq_enabled(
-        BUTTON2,
-        GPIO_IRQ_EDGE_RISE,
-        true
-    );
-
-    while (true) {
-        tight_loop_contents();
     }
 }
