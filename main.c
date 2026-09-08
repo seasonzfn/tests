@@ -10,7 +10,7 @@ int direction = 1;
 volatile int scanning = 0;
 
 void gpio_callback(uint gpio, uint32_t events) {
-    if (gpio == BUTTON1 && (events & GPIO_IRQ_EDGE_FALL)) {
+    if (gpio == BUTTON1 && (events & GPIO_IRQ_EDGE_RISE)) {
         scanning = 1;
     }
 
@@ -39,7 +39,7 @@ int main() {
 
     gpio_set_irq_enabled_with_callback(
         BUTTON1,
-        GPIO_IRQ_EDGE_FALL,
+        GPIO_IRQ_EDGE_RISE,
         true,
         &gpio_callback
     );
